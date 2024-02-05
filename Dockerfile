@@ -26,10 +26,12 @@ RUN apk --no-cache add ca-certificates tzdata
 
 # 从构建阶段复制可执行文件
 COPY --from=builder /coze-discord-proxy .
+FROM deanxv/coze-discord-proxy:latest
 
-# 暴露端口
-EXPOSE 7077
-# 工作目录
+RUN mkdir -p /app/coze-discord-proxy/data/config && chmod 777 /app/coze-discord-proxy/data/config
+RUN printf '%s' "$BOT_CONFIG" | sed 's/\\/"/g' > /app/coze-discord-proxy/data/config/bot_config.json
+
 WORKDIR /app/coze-discord-proxy/data
-# 设置入口命令
+EXPOSE 7077
+
 ENTRYPOINT ["/coze-discord-proxy"]
